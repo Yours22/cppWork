@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstdio>
 #include <thread>
 #include <semaphore>
 
@@ -11,19 +11,35 @@ std::counting_semaphore<> empty(N); // 缓冲区空余位置数量
 std::counting_semaphore<> full(0);  // 缓冲区已占用位置数量
 std::binary_semaphore mutex(1);     // 用于缓冲区的互斥访问
 
-void produce_item(int item) {
-    // 生产项目的代码
-    std::cout << "Produced: " << item << std::endl;
+void produce_item(int item)
+{
+    // 生产项目的代码2
+    printf("Produced: %d\n", item);
+    printf("Buffer: ");
+    for (int i = 0; i < 10; i++)
+    {
+        printf("%d ", buffer[i]);
+    }
+    printf("\n");
 }
 
-void consume_item(int item) {
+void consume_item(int item)
+{
     // 消费项目的代码
-    std::cout << "Consumed: " << item << std::endl;
+    printf("Consumed: %d\n", item);
+    printf("Buffer: ");
+    for (int i = 0; i < 10; i++)
+    {
+        printf("%d ", buffer[i]);
+    }
+    printf("\n");
 }
 
-void producer() {
-    for (int i = 0; i < 20; ++i) {
-        produce_item(i);     // 生产一个新的项目
+void producer()
+{
+    for (int i = 0; i < 20; ++i)
+    {
+        produce_item(i); // 生产一个新的项目
 
         // TODO: 等待缓冲区有空位
         empty.acquire();
@@ -31,8 +47,8 @@ void producer() {
         // TODO: 进入临界区
         mutex.acquire();
 
-        buffer[in] = i;      // 将项目放入缓冲区
-        in = (in + 1) % N;   // 更新下一个生产者将放置项目的位置
+        buffer[in] = i;    // 将项目放入缓冲区
+        in = (in + 1) % N; // 更新下一个生产者将放置项目的位置
 
         // TODO: 离开临界区
         mutex.release();
@@ -42,8 +58,10 @@ void producer() {
     }
 }
 
-void consumer() {
-    for (int i = 0; i < 20; ++i) {
+void consumer()
+{
+    for (int i = 0; i < 20; ++i)
+    {
         // TODO: 等待缓冲区有数据
         full.acquire();
 
@@ -57,13 +75,15 @@ void consumer() {
         mutex.release();
 
         // TODO: 增加缓冲区空余位置数量
+
         empty.release();
 
-        consume_item(item);  // 使用项目
+        consume_item(item); // 使用项目
     }
 }
 
-int main() {
+int main()
+{
     std::thread producerThread(producer);
     std::thread consumerThread(consumer);
 
